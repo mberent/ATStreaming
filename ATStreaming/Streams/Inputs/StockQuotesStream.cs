@@ -7,13 +7,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reactive.Linq;
 using ATStreaming.Streams.Inputs.Interfaces;
+using ATStreaming.Models.Services.Interfaces;
+using log4net;
 
 namespace ATStreaming.Streams.Inputs
 {
     public class StockQuotesStream : IInputStream<StockQuote>
     {
-        public string Company { get; private set; }
-        public string Market { get; private set; }
+        private static readonly ILog _logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public IObservable<StockQuote> Inputs
         {
             get
@@ -22,21 +24,29 @@ namespace ATStreaming.Streams.Inputs
             }
         }
 
-        private string _inputFilePath;
-        private Subject<StockQuote> _stockQuotesSubcject;
+        private ISourceReader<StockQuote> _stockQuotesReader;
+        private Subject<StockQuote> _stockQuotesSubcject = new Subject<StockQuote>();
 
-        public StockQuotesStream(string company, string market, string inputFilePath)
+        public StockQuotesStream(ISourceReader<StockQuote> stockQuotesReader)
         {
-            Company = company;
-            Market = market;
-
-            _inputFilePath = inputFilePath;
-            _stockQuotesSubcject = new Subject<StockQuote>();
+            _stockQuotesReader = stockQuotesReader;
         }
 
-        public void Start()
+        public void Start(SourceDescriptor descriptor)
         {
-            throw new NotImplementedException();
+            try
+            {
+                foreach (var stockQuote in _stockQuotesReader.Read(descriptor))
+                {
+                    _stockQuotesSubcject.OnNext(stockQuote);
+                }
+                _stockQuotesSubcject.OnCompleted();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                _stockQuotesSubcject.OnError(ex);
+            }
         }
     }
 }

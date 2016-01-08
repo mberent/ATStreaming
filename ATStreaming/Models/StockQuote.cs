@@ -23,6 +23,8 @@ namespace ATStreaming.Models
             decimal open, decimal high, decimal low, 
             decimal close, long volume, decimal turnover)
         {
+            Company = company;
+            Market = market;
             Date = date;
             Open = open;
             High = high;
@@ -31,5 +33,10 @@ namespace ATStreaming.Models
             Volume = volume;
             Turnover = turnover;
         }
+
+        /// <summary>
+        /// Only for test purposes
+        /// </summary>
+        public StockQuote() { }
     }
 }
