@@ -29,6 +29,7 @@ namespace ATStreaming
                 () => _logger.Info("Completed"));
 
             inputSource.Start(descriptor);
+
         }
     }
 }
