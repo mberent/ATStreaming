@@ -8,35 +8,14 @@ namespace ATStreaming.Models
 {
     public class StockQuote
     {
-        public string Company { get; private set; }
-        public string Market { get; private set; }
-        public DateTime Date { get; private set; }
-        public decimal Open { get; private set; }
-        public decimal High { get; private set; }
-        public decimal Low { get; private set; }
-        public decimal Close { get; private set; }
-        public long Volume { get; private set; }
-        public decimal Turnover { get; private set; }
-
-        public StockQuote(
-            string company, string market, DateTime date, 
-            decimal open, decimal high, decimal low, 
-            decimal close, long volume, decimal turnover)
-        {
-            Company = company;
-            Market = market;
-            Date = date;
-            Open = open;
-            High = high;
-            Low = low;
-            Close = close;
-            Volume = volume;
-            Turnover = turnover;
-        }
-
-        /// <summary>
-        /// Only for test purposes
-        /// </summary>
-        public StockQuote() { }
+        public string Company { get; set; }
+        public string Market { get; set; }
+        public DateTime Date { get; set; }
+        public decimal Open { get; set; }
+        public decimal High { get; set; }
+        public decimal Low { get; set; }
+        public decimal Close { get; set; }
+        public long Volume { get; set; }
+        public decimal Turnover { get; set; }
     }
 }
