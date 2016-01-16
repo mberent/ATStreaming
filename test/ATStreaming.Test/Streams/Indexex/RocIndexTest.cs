@@ -15,7 +15,7 @@ namespace ATStreaming.Test.Streams.Indexex
     public class RocIndexTest
     {
         [TestMethod]
-        public void Values_ThreeInputAndRocDelayTwo_OneValue()
+        public void Values_ThreeInputsAndDelayTwo_OneValue()
         {
             var start = 1;
             var end = 3;
@@ -23,7 +23,7 @@ namespace ATStreaming.Test.Streams.Indexex
             var rocIndex = new RocIndex(end - start);
 
             var result = 0.0M;
-            var indexValue = rocIndex.Values.Take(1).Subscribe(next => result = next);
+            var indexValue = rocIndex.Values.FirstAsync().Subscribe(next => result = next);
 
             Observable.Range(start, end)
                 .Select(x => new StockQuote { Close = x })
@@ -31,6 +31,28 @@ namespace ATStreaming.Test.Streams.Indexex
 
 
             Assert.AreEqual(expected, result);
+        }
+
+        [TestMethod]
+        public void Values_SixInputsAndDelayTwo_FourValues()
+        {
+            var delay = 2;
+            var inputs = new[] { 22.1M, 22.4M, 21, 19M, 20.5M, 22M };
+            var rocIndex = new RocIndex(delay);
+
+            decimal[] indexValues = null;
+
+            rocIndex.Values.ToList().Subscribe(next => indexValues = next.ToArray());
+
+            Observable.ToObservable(inputs)
+                .Select(x => new StockQuote { Close = x })
+                .Subscribe(rocIndex);
+
+            var expected = inputs
+                .Skip(delay)
+                .Select((x, i) => (x - inputs[i]) / inputs[i] * 100);
+
+            CollectionAssert.AreEqual(expected.ToArray(), indexValues);
         }
     }
 }

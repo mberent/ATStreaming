@@ -19,9 +19,7 @@ namespace ATStreaming.Streams.Indexes
         {
             _stockQuotes = new Subject<StockQuote>();
             Values = _stockQuotes
-                .Do(x => Console.WriteLine(x))
                 .Skip(delay)
-                .Do(x => Console.WriteLine(x))
                 .Zip(_stockQuotes, (actual, past) => (actual.Close - past.Close) / past.Close * 100)
                 .AsObservable();
         }
