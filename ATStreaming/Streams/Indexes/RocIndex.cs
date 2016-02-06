@@ -9,7 +9,7 @@ using System.Reactive.Linq;
 
 namespace ATStreaming.Streams.Indexes
 {
-    public class RocIndex : IObserver<StockQuote>
+    public class RocIndex : IObserver<StockQuote>, IDisposable
     {
         private readonly Subject<StockQuote> _stockQuotes;
 
@@ -20,7 +20,7 @@ namespace ATStreaming.Streams.Indexes
             _stockQuotes = new Subject<StockQuote>();
             Values = _stockQuotes
                 .Skip(delay)
-                .Zip(_stockQuotes, (actual, past) => (actual.Close - past.Close) / past.Close * 100)
+                .Zip(_stockQuotes, (actual, past) => (actual.Open - past.Open) / past.Open * 100)
                 .AsObservable();
         }
 
@@ -37,6 +37,14 @@ namespace ATStreaming.Streams.Indexes
         public void OnNext(StockQuote value)
         {
             _stockQuotes.OnNext(value);
+        }
+
+        public void Dispose()
+        {
+            if (_stockQuotes != null)
+            {
+                _stockQuotes.Dispose();
+            }
         }
     }
 }

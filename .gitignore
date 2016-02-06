@@ -196,3 +196,4 @@ FakesAssemblies/
 *.opt
 /ATStreaming/cov-int
 /ATStreaming/Files
+/cov-int

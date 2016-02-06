@@ -11,28 +11,35 @@ using System.Threading.Tasks;
 using System.Reactive.Linq;
 using ATStreaming.Streams.Indexes;
 using ATStreaming.Streams.Outputs;
+using System.IO;
 
 namespace ATStreaming
 {
     class Program
     {
-        private static readonly ILog _logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
         static void Main(string[] args)
         {
             BasicConfigurator.Configure();
 
-            var descriptor = new SourceDescriptor(@"Files\APPLE_NASDAQ.csv");
-            var reader = new SourceReader();
-            var delay = 6;
-            var inputSource = new StockQuotesStream(reader);
-            var rocIndex = new RocIndex(delay);
+            var directory = "Files";
 
-            inputSource.Inputs.Subscribe(rocIndex);
-            var pocket = new Pocket(inputSource.Inputs.Skip(delay), rocIndex.Values.Select(x => x > 0 ? true : false), 1000);
+            foreach (var filePath in Directory.EnumerateFiles(directory))
+            {
+                var descriptor = new SourceDescriptor(filePath);
+                var reader = new SourceReader();
+                var delay = 10;
+                var inputSource = new StockQuotesStream(reader);
+                var rocIndex = new RocIndex(delay);
 
-            inputSource.Start(descriptor);
+                inputSource.Inputs.Subscribe(rocIndex);
+                var pocket = new Pocket(inputSource.Inputs.Skip(delay), rocIndex.Values.Select(x => x > 0 ? true : false), 1000);
 
+                decimal finalValue = 0;
+                pocket.Money.Subscribe(Console.WriteLine);
+
+                inputSource.Start(descriptor);
+                Console.WriteLine(String.Format("{0}: {1}", Path.GetFileName(filePath), finalValue));
+            }
         }
     }
 }

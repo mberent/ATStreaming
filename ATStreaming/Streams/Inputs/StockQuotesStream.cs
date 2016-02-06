@@ -6,15 +6,17 @@ using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reactive.Linq;
-using ATStreaming.Streams.Inputs.Interfaces;
 using ATStreaming.Models.Services.Interfaces;
 using log4net;
 
 namespace ATStreaming.Streams.Inputs
 {
-    public class StockQuotesStream : IInputStream<StockQuote>
+    public class StockQuotesStream: IDisposable
     {
         private static readonly ILog _logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        private readonly ISourceReader<StockQuote> _stockQuotesReader;
+        private readonly Subject<StockQuote> _stockQuotesSubcject = new Subject<StockQuote>();
 
         public IObservable<StockQuote> Inputs
         {
@@ -23,9 +25,6 @@ namespace ATStreaming.Streams.Inputs
                 return _stockQuotesSubcject.AsObservable();
             }
         }
-
-        private ISourceReader<StockQuote> _stockQuotesReader;
-        private Subject<StockQuote> _stockQuotesSubcject = new Subject<StockQuote>();
 
         public StockQuotesStream(ISourceReader<StockQuote> stockQuotesReader)
         {
@@ -46,6 +45,14 @@ namespace ATStreaming.Streams.Inputs
             {
                 _logger.Error(ex);
                 _stockQuotesSubcject.OnError(ex);
+            }
+        }
+
+        public void Dispose()
+        {
+            if (_stockQuotesSubcject != null)
+            {
+                _stockQuotesSubcject.Dispose();
             }
         }
     }

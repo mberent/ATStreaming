@@ -26,7 +26,7 @@ namespace ATStreaming.Test.Streams.Indexex
             var indexValue = rocIndex.Values.FirstAsync().Subscribe(next => result = next);
 
             Observable.Range(start, end)
-                .Select(x => new StockQuote { Close = x })
+                .Select(x => new StockQuote { Open = x })
                 .Subscribe(rocIndex);
 
 
@@ -45,7 +45,7 @@ namespace ATStreaming.Test.Streams.Indexex
             rocIndex.Values.ToList().Subscribe(next => indexValues = next.ToArray());
 
             Observable.ToObservable(inputs)
-                .Select(x => new StockQuote { Close = x })
+                .Select(x => new StockQuote { Open = x })
                 .Subscribe(rocIndex);
 
             var expected = inputs
