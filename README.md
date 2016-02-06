@@ -1,7 +1,5 @@
 # ATStreaming
-Stream technical analysis of stock quotes (using Reactive Extensions)
 
-<a href="https://scan.coverity.com/projects/mberent-atstreaming">
-  <img alt="Coverity Scan Build Status"
-       src="https://scan.coverity.com/projects/7610/badge.svg"/>
-</a>
+Projekt zaliczeniowy z przedmiotu "Zaawansowane systemy baz danych" - Strumieniowa analiza techniczna kursu spółek giełdowych.
+
+Implementacja z wykorzystaniem biblioteki Reactive Extensions (https://github.com/Reactive-Extensions/Rx.NET)
